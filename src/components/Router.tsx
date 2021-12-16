@@ -1,13 +1,14 @@
-import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Auth from "../routes/auth";
-import Home from "../routes/home";
+import Auth from "routes/auth";
+import Home from "routes/home";
 
-function Router() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+interface IRouterProps {
+  isLoggedIn: boolean;
+}
 
+function Router({ isLoggedIn }: IRouterProps) {
   // User not Logged In Router
-  if (isLoggedIn === false) {
+  if (!isLoggedIn === false) {
     return (
       <BrowserRouter>
         <Routes>
