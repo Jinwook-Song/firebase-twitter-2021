@@ -8,7 +8,7 @@ interface IRouterProps {
 
 function Router({ isLoggedIn }: IRouterProps) {
   // User not Logged In Router
-  if (!isLoggedIn === false) {
+  if (isLoggedIn === false) {
     return (
       <BrowserRouter>
         <Routes>
