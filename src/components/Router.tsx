@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Navigation from "components/Navigation";
 import Auth from "routes/auth";
 import Home from "routes/home";
+import Profile from "routes/profile";
 
 interface IRouterProps {
   isLoggedIn: boolean;
@@ -21,8 +23,10 @@ function Router({ isLoggedIn }: IRouterProps) {
   // User Logged In Router
   return (
     <BrowserRouter>
+      <Navigation />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </BrowserRouter>
   );

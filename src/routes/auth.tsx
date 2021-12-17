@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { EMAIL_VALIDATION_CHECK } from "types.d";
+import { EMAIL_VALIDATION_CHECK } from "../types.d";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,

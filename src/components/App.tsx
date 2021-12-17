@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
-import Router from "components/Router";
 import { authService } from "../firebase";
+import Router from "components/Router";
+import Footer from "components/Footer";
 
 function App() {
   const [ready, setReady] = useState(false);
@@ -24,7 +25,7 @@ function App() {
   return (
     <>
       <Router isLoggedIn={Boolean(isLoggedIn)} />
-      <footer>&copy; Twitter {new Date().getFullYear()}</footer>
+      <Footer />
     </>
   );
 }
