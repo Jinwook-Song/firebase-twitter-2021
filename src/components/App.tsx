@@ -23,7 +23,7 @@ function App() {
 
   return (
     <>
-      <Router isLoggedIn={Boolean(!isLoggedIn)} />
+      <Router isLoggedIn={Boolean(isLoggedIn)} />
       <footer>&copy; Twitter {new Date().getFullYear()}</footer>
     </>
   );

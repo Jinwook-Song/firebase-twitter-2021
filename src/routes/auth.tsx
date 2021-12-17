@@ -12,6 +12,17 @@ type AuthInputs = {
   password: string;
 };
 
+enum AuthErrorType {
+  "USER_EXIST" = "auth/email-already-in-use",
+  "USER_NOT_FOUND" = "auth/user-not-found",
+  "WRONG_PASSWORD" = "auth/wrong-password",
+  "TOO_MANY_REQUESTS" = "auth/too-many-requests",
+}
+
+type AuthErrors = {
+  message: string;
+};
+
 function Auth() {
   const [authError, setAuthError] = useState<string | null>(null);
   const [newAccount, setNewAccount] = useState(true);
@@ -34,18 +45,24 @@ function Auth() {
           email,
           password
         );
+        setAuthError(null);
         console.log("created and login", user);
       } catch (error) {
-        // 사용중인 계정
-        if (
-          (error as { message: string }).message.includes(
-            "auth/email-already-in-use"
-          )
-        ) {
-          setAuthError("Account already in use");
-          setNewAccount(false);
-        } else {
-          console.log("Unexpected create account", error);
+        switch (true) {
+          // 사용중인 계정
+          case (error as AuthErrors).message //
+            .includes(AuthErrorType.USER_EXIST):
+            setAuthError("Account already in use");
+            setNewAccount(false);
+            break;
+          // 너무 많은 요청 발생
+          case (error as AuthErrors).message //
+            .includes(AuthErrorType.TOO_MANY_REQUESTS):
+            setAuthError("Too many requests were made. Please use it later");
+            break;
+          // 예상하지 못한 에러
+          default:
+            console.log("Unexpected create account", error);
         }
       }
     } else {
@@ -56,26 +73,34 @@ function Auth() {
           email,
           password
         );
+        setAuthError(null);
         console.log("login", user);
       } catch (error) {
-        // 계정이 없는 경우
-        if (
-          (error as { message: string }).message.includes("auth/user-not-found")
-        ) {
-          setAuthError("Please create an account first");
-          setNewAccount(true);
-        }
-        // 비밀번호 틀린 경우
-        else if (
-          (error as { message: string }).message.includes("auth/wrong-password")
-        ) {
-          setAuthError("Wrong Password");
-        } else {
-          console.log("Unexpected sign in", error);
+        switch (true) {
+          // 계정이 없는 경우
+          case (error as AuthErrors).message //
+            .includes(AuthErrorType.USER_NOT_FOUND):
+            setAuthError("Please create an account first");
+            setNewAccount(true);
+            break;
+          // 비밀번호 틀린 경우
+          case (error as AuthErrors).message //
+            .includes(AuthErrorType.WRONG_PASSWORD):
+            setAuthError("Wrong Password");
+            break;
+          // 너무 많은 요청 발생
+          case (error as AuthErrors).message //
+            .includes(AuthErrorType.TOO_MANY_REQUESTS):
+            setAuthError("Too many requests were made. Please use it later");
+            break;
+          // 예상하지 못한 에러
+          default:
+            console.log("Unexpected create account", error);
         }
       }
     }
   };
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <input
