@@ -1,23 +1,35 @@
 import { collection, addDoc, getDocs } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { StringDecoder } from "string_decoder";
 import { dbService } from "../firebase";
 
 interface TweetInputs {
   tweet: string;
 }
 
+interface ITweetData extends TweetInputs {
+  createdAt: number;
+}
+
+interface ITweetObj extends ITweetData {
+  id: string;
+}
+
 function Home() {
-  const [tweets, setTweets] = useState<any[]>([]);
+  const [tweets, setTweets] = useState<ITweetObj[]>([]);
 
   const getTweets = async () => {
     const querySnapshot = await getDocs(collection(dbService, "tweets"));
     querySnapshot.forEach((doc) => {
-      const tweetObject = {
-        ...doc.data(),
+      const data = doc.data() as ITweetData;
+      const tweetObject: ITweetObj = {
+        ...data,
         id: doc.id,
       };
-      setTweets((prev) => [tweetObject, ...prev]);
+      if (tweets !== null) {
+        setTweets((prev) => [tweetObject, ...prev]);
+      }
     });
   };
 
