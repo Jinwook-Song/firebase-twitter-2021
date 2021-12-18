@@ -1,8 +1,15 @@
 import { UserInfo } from "components/App";
-import { collection, addDoc, getDocs } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  onSnapshot,
+  query,
+  orderBy,
+} from "firebase/firestore";
+import { dbService } from "../firebase";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { dbService } from "../firebase";
 
 interface TweetInputs {
   tweet: string;
@@ -20,22 +27,18 @@ interface ITweetObj extends ITweetData {
 function Home({ uid }: UserInfo) {
   const [tweets, setTweets] = useState<ITweetObj[]>([]);
 
-  const getTweets = async () => {
-    const querySnapshot = await getDocs(collection(dbService, "tweets"));
-    querySnapshot.forEach((doc) => {
-      const data = doc.data() as ITweetData;
-      const tweetObject: ITweetObj = {
-        ...data,
-        id: doc.id,
-      };
-      if (tweets !== null) {
-        setTweets((prev) => [tweetObject, ...prev]);
-      }
-    });
-  };
-
   useEffect(() => {
-    getTweets();
+    onSnapshot(
+      query(collection(dbService, "tweets"), orderBy("createdAt", "desc")),
+      (snapshot) => {
+        const tweetArray: ITweetObj[] = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...(doc.data() as ITweetData),
+        }));
+        setTweets(tweetArray);
+      }
+    );
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -63,8 +66,6 @@ function Home({ uid }: UserInfo) {
       reset();
     }
   };
-
-  console.log(tweets);
 
   return (
     <div>
