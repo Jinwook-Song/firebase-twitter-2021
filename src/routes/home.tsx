@@ -1,11 +1,12 @@
+import { UserInfo } from "components/App";
 import { collection, addDoc, getDocs } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { StringDecoder } from "string_decoder";
 import { dbService } from "../firebase";
 
 interface TweetInputs {
   tweet: string;
+  creatorId: UserInfo;
 }
 
 interface ITweetData extends TweetInputs {
@@ -16,7 +17,7 @@ interface ITweetObj extends ITweetData {
   id: string;
 }
 
-function Home() {
+function Home({ uid }: UserInfo) {
   const [tweets, setTweets] = useState<ITweetObj[]>([]);
 
   const getTweets = async () => {
@@ -35,6 +36,7 @@ function Home() {
 
   useEffect(() => {
     getTweets();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const {
@@ -51,6 +53,7 @@ function Home() {
     try {
       const docRef = await addDoc(collection(dbService, "tweets"), {
         tweet,
+        creatorId: uid,
         createdAt: Date.now(),
       });
       console.log("Document written with ID: ", docRef.id);

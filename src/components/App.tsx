@@ -4,13 +4,19 @@ import { authService } from "../firebase";
 import Router from "components/Router";
 import Footer from "components/Footer";
 
+export interface UserInfo {
+  uid: string;
+}
+
 function App() {
   const [ready, setReady] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loggedInUser, setLoggedInUser] = useState<UserInfo>({ uid: "" });
   useEffect(() => {
     onAuthStateChanged(authService, (user) => {
       if (user) {
         setIsLoggedIn(true);
+        setLoggedInUser(user);
       } else {
         setIsLoggedIn(false);
       }
@@ -24,7 +30,10 @@ function App() {
 
   return (
     <>
-      <Router isLoggedIn={Boolean(isLoggedIn)} />
+      <Router //
+        isLoggedIn={Boolean(isLoggedIn)}
+        uid={loggedInUser.uid}
+      />
       <Footer />
     </>
   );
