@@ -10,15 +10,13 @@ export interface UserInfo {
 
 function App() {
   const [ready, setReady] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loggedInUser, setLoggedInUser] = useState<UserInfo>({ uid: "" });
   useEffect(() => {
     onAuthStateChanged(authService, (user) => {
       if (user) {
-        setIsLoggedIn(true);
         setLoggedInUser(user);
       } else {
-        setIsLoggedIn(false);
+        setLoggedInUser({ uid: "" });
       }
       setReady(true);
     });
@@ -31,7 +29,6 @@ function App() {
   return (
     <>
       <Router //
-        isLoggedIn={Boolean(isLoggedIn)}
         uid={loggedInUser.uid}
       />
       <Footer />

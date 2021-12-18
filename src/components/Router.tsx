@@ -5,13 +5,9 @@ import Home from "routes/home";
 import Profile from "routes/profile";
 import { UserInfo } from "./App";
 
-interface IRouterProps extends UserInfo {
-  isLoggedIn: boolean;
-}
-
-function Router({ isLoggedIn, uid }: IRouterProps) {
+function Router({ uid }: UserInfo) {
   // User not Logged In Router
-  if (isLoggedIn === false) {
+  if (!uid) {
     return (
       <BrowserRouter>
         <Routes>

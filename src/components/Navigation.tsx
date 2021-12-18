@@ -4,8 +4,11 @@ import { authService } from "../firebase";
 function Navigation() {
   const navigate = useNavigate();
   const onLogout = () => {
-    authService.signOut();
-    navigate("/", { replace: true });
+    const ok = window.confirm("Are you sure to logout?");
+    if (ok) {
+      authService.signOut();
+      navigate("/", { replace: true });
+    }
   };
   return (
     <nav>
@@ -16,7 +19,7 @@ function Navigation() {
         <li>
           <Link to="/profile">Profile</Link>
         </li>
-        <li onClick={onLogout}>&larr;</li>
+        <li onClick={onLogout}>Logout</li>
       </ul>
     </nav>
   );

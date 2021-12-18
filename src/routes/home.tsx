@@ -52,12 +52,12 @@ function Home({ uid }: UserInfo) {
   const onSubmit = async () => {
     const { tweet } = getValues();
     try {
-      const docRef = await addDoc(collection(dbService, "tweets"), {
+      const tweetRef = await addDoc(collection(dbService, "tweets"), {
         tweet,
         creatorId: uid,
         createdAt: Date.now(),
       });
-      console.log("Document written with ID: ", docRef.id);
+      console.log("Document written with ID: ", tweetRef.id);
     } catch (error) {
       console.error("Error adding document: ", error);
     } finally {
