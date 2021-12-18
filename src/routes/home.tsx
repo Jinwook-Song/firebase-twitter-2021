@@ -2,7 +2,6 @@ import { UserInfo } from "components/App";
 import {
   collection,
   addDoc,
-  getDocs,
   onSnapshot,
   query,
   orderBy,
@@ -10,8 +9,9 @@ import {
 import { dbService } from "../firebase";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import Tweet from "components/Tweet";
 
-interface TweetInputs {
+export interface TweetInputs {
   tweet: string;
   creatorId: UserInfo;
 }
@@ -20,7 +20,7 @@ interface ITweetData extends TweetInputs {
   createdAt: number;
 }
 
-interface ITweetObj extends ITweetData {
+export interface ITweetObj extends ITweetData {
   id: string;
 }
 
@@ -38,8 +38,6 @@ function Home({ uid }: UserInfo) {
         setTweets(tweetArray);
       }
     );
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const {
@@ -72,7 +70,7 @@ function Home({ uid }: UserInfo) {
       <form onSubmit={handleSubmit(onSubmit)}>
         <input
           {...register("tweet", {
-            required: "true",
+            required: true,
           })}
           type="text"
           placeholder="What's happening?"
@@ -82,10 +80,14 @@ function Home({ uid }: UserInfo) {
         <button disabled={isValid ? false : true}>Tweet</button>
       </form>
       <div>
-        {tweets.map(({ tweet, id }) => (
-          <div key={id}>
-            <h4>{tweet}</h4>
-          </div>
+        {tweets.map(({ tweet, id: docId, creatorId }) => (
+          <Tweet
+            key={docId}
+            id={docId}
+            tweet={tweet}
+            creatorId={creatorId}
+            loggedInUserId={uid}
+          />
         ))}
       </div>
     </div>
