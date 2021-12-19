@@ -7,7 +7,7 @@ import {
   orderBy,
 } from "firebase/firestore";
 import { dbService } from "../firebase";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import Tweet from "components/Tweet";
 
@@ -26,6 +26,8 @@ export interface ITweetObj extends ITweetData {
 
 function Home({ uid }: UserInfo) {
   const [tweets, setTweets] = useState<ITweetObj[]>([]);
+  const [fileUrl, setFileUrl] = useState<string>();
+  const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     onSnapshot(
@@ -65,6 +67,30 @@ function Home({ uid }: UserInfo) {
     }
   };
 
+  const onFileChange = ({
+    currentTarget: { files },
+  }: React.ChangeEvent<HTMLInputElement>) => {
+    if (files) {
+      // get the file
+      const uploadFile = files[0];
+      // create a reader
+      const reader = new FileReader();
+      // listening onload event
+      reader.onload = (finishedRead) => {
+        setFileUrl(finishedRead.target?.result as string);
+      };
+      // read using data url
+      reader.readAsDataURL(uploadFile);
+    }
+  };
+
+  const onClearFile = () => {
+    setFileUrl("");
+    if (fileRef.current) {
+      fileRef.current.value = "";
+    }
+  };
+
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -77,7 +103,19 @@ function Home({ uid }: UserInfo) {
           className="input"
         />
         {errors.tweet?.message && <div>{errors.tweet.message}</div>}
+        <input
+          onChange={onFileChange}
+          type="file"
+          accept="image/*"
+          ref={fileRef}
+        />
         <button disabled={isValid ? false : true}>Tweet</button>
+        {fileUrl && (
+          <div>
+            <img src={fileUrl} alt={"tweetImg"} width="50px" height="50px" />
+            <button onClick={onClearFile}>Cancle</button>
+          </div>
+        )}
       </form>
       <div>
         {tweets.map(({ tweet, id: docId, creatorId }) => (
