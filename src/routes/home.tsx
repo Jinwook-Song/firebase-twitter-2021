@@ -19,7 +19,7 @@ export interface TweetInputs {
   imageUrl?: string;
 }
 
-interface ITweetData extends TweetInputs {
+export interface ITweetData extends TweetInputs {
   createdAt: number;
 }
 
@@ -27,12 +27,13 @@ export interface ITweetObj extends ITweetData {
   id: string;
 }
 
-function Home({ uid }: UserInfo) {
+function Home({ uid }: Partial<UserInfo>) {
   const [tweets, setTweets] = useState<ITweetObj[]>([]);
   const [fileUrl, setFileUrl] = useState<string>();
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    // get tweets
     onSnapshot(
       query(collection(dbService, "tweets"), orderBy("createdAt", "desc")),
       (snapshot) => {

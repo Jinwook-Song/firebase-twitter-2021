@@ -1,7 +1,8 @@
 import { Link, useNavigate } from "react-router-dom";
 import { authService } from "../firebase";
+import { UserInfo } from "./App";
 
-function Navigation() {
+function Navigation({ displayName }: UserInfo) {
   const navigate = useNavigate();
   const onLogout = () => {
     const ok = window.confirm("Are you sure to logout?");
@@ -17,7 +18,7 @@ function Navigation() {
           <Link to="/">Home</Link>
         </li>
         <li>
-          <Link to="/profile">Profile</Link>
+          <Link to="/profile">{displayName ?? "User"}</Link>
         </li>
         <li onClick={onLogout}>Logout</li>
       </ul>

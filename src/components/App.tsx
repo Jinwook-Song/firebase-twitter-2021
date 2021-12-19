@@ -6,17 +6,22 @@ import Footer from "components/Footer";
 
 export interface UserInfo {
   uid: string;
+  displayName: string | null;
 }
 
 function App() {
   const [ready, setReady] = useState(false);
-  const [loggedInUser, setLoggedInUser] = useState<UserInfo>({ uid: "" });
+  const [loggedInUser, setLoggedInUser] = useState<UserInfo>({
+    uid: "",
+    displayName: null,
+  });
   useEffect(() => {
     onAuthStateChanged(authService, (user) => {
       if (user) {
+        console.log(user);
         setLoggedInUser(user);
       } else {
-        setLoggedInUser({ uid: "" });
+        setLoggedInUser({ uid: "", displayName: null });
       }
       setReady(true);
     });
@@ -30,6 +35,7 @@ function App() {
     <>
       <Router //
         uid={loggedInUser.uid}
+        displayName={loggedInUser.displayName}
       />
       <Footer />
     </>
