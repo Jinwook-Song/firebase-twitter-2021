@@ -23,7 +23,10 @@ function Router({ uid, displayName }: UserInfo) {
       <Navigation uid={uid} displayName={displayName} />
       <Routes>
         <Route path="/" element={<Home uid={uid} />} />
-        <Route path="/profile" element={<Profile uid={uid} />} />
+        <Route
+          path="/profile"
+          element={<Profile uid={uid} displayName={displayName} />}
+        />
       </Routes>
     </BrowserRouter>
   );

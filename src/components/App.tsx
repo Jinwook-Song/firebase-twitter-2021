@@ -18,7 +18,6 @@ function App() {
   useEffect(() => {
     onAuthStateChanged(authService, (user) => {
       if (user) {
-        console.log(user);
         setLoggedInUser(user);
       } else {
         setLoggedInUser({ uid: "", displayName: null });
