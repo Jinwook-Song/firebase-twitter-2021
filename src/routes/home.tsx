@@ -6,9 +6,11 @@ import {
   query,
   orderBy,
 } from "firebase/firestore";
-import { dbService } from "../firebase";
+import { ref, uploadString } from "firebase/storage";
+import { dbService, storageService } from "../firebase";
 import { useEffect, useState, useRef } from "react";
 import { useForm } from "react-hook-form";
+import { v4 as uuidv4 } from "uuid";
 import Tweet from "components/Tweet";
 
 export interface TweetInputs {
@@ -54,12 +56,17 @@ function Home({ uid }: UserInfo) {
   const onSubmit = async () => {
     const { tweet } = getValues();
     try {
-      const tweetRef = await addDoc(collection(dbService, "tweets"), {
-        tweet,
-        creatorId: uid,
-        createdAt: Date.now(),
-      });
-      console.log("Document written with ID: ", tweetRef.id);
+      // const tweetRef = await addDoc(collection(dbService, "tweets"), {
+      //   tweet,
+      //   creatorId: uid,
+      //   createdAt: Date.now(),
+      // });
+      // console.log("Document written with ID: ", tweetRef.id);
+      const storageRef = ref(storageService, `${uid}/${uuidv4()}`);
+      if (fileUrl) {
+        const response = await uploadString(storageRef, fileUrl, "data_url");
+        console.log(response);
+      }
     } catch (error) {
       console.error("Error adding document: ", error);
     } finally {
