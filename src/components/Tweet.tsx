@@ -13,6 +13,7 @@ function Tweet({
   id: docId,
   creatorId,
   loggedInUserId,
+  imageUrl,
 }: Partial<ITweetProps>) {
   const [editTweet, setEditTweet] = useState(false);
   const {
@@ -71,6 +72,7 @@ function Tweet({
   return (
     <div>
       <h4>{tweet}</h4>
+      {imageUrl && <img src={imageUrl} alt={tweet} width={50} height={50} />}
       {creatorId === loggedInUserId && (
         <>
           <button onClick={onDeleteClick}>Delete</button>

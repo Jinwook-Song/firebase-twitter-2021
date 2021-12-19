@@ -6,7 +6,7 @@ import {
   query,
   orderBy,
 } from "firebase/firestore";
-import { ref, uploadString } from "firebase/storage";
+import { ref, uploadString, getDownloadURL } from "firebase/storage";
 import { dbService, storageService } from "../firebase";
 import { useEffect, useState, useRef } from "react";
 import { useForm } from "react-hook-form";
@@ -16,6 +16,7 @@ import Tweet from "components/Tweet";
 export interface TweetInputs {
   tweet: string;
   creatorId: UserInfo;
+  imageUrl?: string;
 }
 
 interface ITweetData extends TweetInputs {
@@ -56,21 +57,24 @@ function Home({ uid }: UserInfo) {
   const onSubmit = async () => {
     const { tweet } = getValues();
     try {
-      // const tweetRef = await addDoc(collection(dbService, "tweets"), {
-      //   tweet,
-      //   creatorId: uid,
-      //   createdAt: Date.now(),
-      // });
-      // console.log("Document written with ID: ", tweetRef.id);
       const storageRef = ref(storageService, `${uid}/${uuidv4()}`);
+      let getFileUrl = "";
       if (fileUrl) {
         const response = await uploadString(storageRef, fileUrl, "data_url");
-        console.log(response);
+        getFileUrl = await getDownloadURL(response.ref);
       }
+      const tweetRef = await addDoc(collection(dbService, "tweets"), {
+        tweet,
+        creatorId: uid,
+        createdAt: Date.now(),
+        imageUrl: getFileUrl,
+      });
+      console.log("Document written with ID: ", tweetRef.id);
     } catch (error) {
       console.error("Error adding document: ", error);
     } finally {
       reset();
+      setFileUrl("");
     }
   };
 
@@ -125,13 +129,14 @@ function Home({ uid }: UserInfo) {
         )}
       </form>
       <div>
-        {tweets.map(({ tweet, id: docId, creatorId }) => (
+        {tweets.map(({ tweet, id: docId, creatorId, imageUrl }) => (
           <Tweet
             key={docId}
             id={docId}
             tweet={tweet}
             creatorId={creatorId}
             loggedInUserId={uid}
+            imageUrl={imageUrl}
           />
         ))}
       </div>
