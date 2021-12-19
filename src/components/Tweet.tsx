@@ -1,5 +1,6 @@
 import { doc, deleteDoc, updateDoc } from "firebase/firestore";
-import { dbService } from "../firebase";
+import { ref, deleteObject } from "firebase/storage";
+import { dbService, storageService } from "../firebase";
 import { ITweetObj, TweetInputs } from "routes/home";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -34,6 +35,10 @@ function Tweet({
     if (ok) {
       // delete tweet
       await deleteDoc(doc(dbService, "tweets", `${docId}`));
+      // delete Image in storage
+      if (imageUrl) {
+        await deleteObject(ref(storageService, imageUrl));
+      }
     }
   };
   const onEditToggle = () => {
